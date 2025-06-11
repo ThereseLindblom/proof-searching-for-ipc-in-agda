@@ -1,3 +1,5 @@
+> ⚠️ This repository is a mirror of `codeberg.org/emmabastas/proof-searching-for-ipc-in-agda`
+
 # proof-searching-for-ipc-in-agda
 
 Code/proofs in Agda for my bachelors thesis "A proof searching procedure for intuitionistic propositional logic in Agda"
