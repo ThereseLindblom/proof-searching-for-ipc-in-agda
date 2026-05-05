@@ -1,5 +1,3 @@
-module LJ where
-
 open import Data.Nat using (ℕ)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; cong; cong₂)
 open import Data.Empty using () renaming (⊥-elim to bot-elim) public

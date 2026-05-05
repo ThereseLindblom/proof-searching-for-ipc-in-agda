@@ -1,3 +1,6 @@
+
+module proof-searching-for-ipc-in-agda.LJ_Heyting where
+
 open import Data.Nat using (ℕ)
 open import Relation.Binary.PropositionalEquality using (_≡_; refl; cong; cong₂)
 open import Data.Empty using () renaming (⊥-elim to bot-elim) public
@@ -180,45 +183,85 @@ exchange {Γ} {A} {B} = strong-weaken lemm
 module Soundness
       -- Parametrize by a set (carrier of Heyting algebra)
       (H : Set)
+      (⊤h : H)
+      (⊥h : H)
+      (_≤_ : H → H → Set)
+      --partial order axioms
+      (≤-refl : (a : H) → a ≤ a)
+      (≤-antisym : (a b : H) → a ≤ b → b ≤ a → a ≡ b)
+      (≤-trans : (a b c : H) → a ≤ b → b ≤ c → a ≤ c)
+      --top H1
+      (≤-top : (a : H) → a ≤ ⊤h)
+      --bot H5
+      (≤-bot : (a : H) → ⊥h ≤ a)
 
-      -- Add operations like this:
+      -- Operations:
       (_∧h_ : H → H → H)
-      -- TODO: add remaining Heyting algebra operations
+      (_∨h_ : H → H → H)
+      (_⟶h_ : H → H → H)
+      
 
-      -- Add Heyting algebra axioms/laws like this:
+      -- Heyting algebra axioms/laws:
+
+      (H2 : (a b : H) → (a ∧h b) ≤ a)
+      (H3 : (a b : H) → (a ∧h b) ≤ b)
+      (H4 : (a b c : H) → c ≤ a → c ≤ b → c ≤ (a ∧h b))
+      (H6 : (a b : H) → a ≤ (a ∨h b))
+      (H7 : (a b : H) → b ≤ (a ∨h b))
+      (H8 : (a b c : H) → a ≤ c → b ≤ c → (a ∨h b) ≤ c)
+      (H9 : (a b c : H) → c ≤ (a ⟶h b) ≡ (c ∧h a) ≤ b)
       (∧h-assoc : (a b c : H) → a ∧h (b ∧h c) ≡ (a ∧h b) ∧h c)
-      -- TODO: add remainig Heyting algebra axioms/laws
+      (∨h-assoc : (a b c : H) → a ∨h (b ∨h c) ≡ (a ∨h b) ∨h c)
+      --(∨h-distrib-∧h : (a b c : H) → a ∨h (b ∧h c) ≡ (a ∨h b) ∧h (a ∨h c)) lägg lemma nere
+      --(∧h-distrib-∨h : (a b c : H) → a ∧h (b ∨h c) ≡ (a ∧h b) ∨h (a ∧h c)) lägg lemma nere
 
       -- With the above parameters we can now start the proof, so we
       -- start the module using where:
   where
 
   -- TODO: You might need to prove lemmas about Heyting algebras here.
-  -- You might for example want to define _≤_ using _∧h_, etc...
   -- This can be done on a call by need basis by seeing what you need in the proof below
 
-  -- An assignment is now just a function from numbers to H
+
+
+
   Assignment : Set
   Assignment = ℕ → H
 
-  ⟦_⟧_ : Prop → Assignment → H
-  ⟦_⟧_ = {!!}
+  〚_〛_ : Prop → Assignment → H
+  〚 Pvar x 〛 a = a x
+  〚 ⊤ 〛 a = ⊤h
+  〚 ⊥ 〛 a = ⊥h
+  〚 x ∧ y 〛 a = (〚 x 〛 a) ∧h (〚 y 〛 a)
+  〚 x ∨ y 〛 a = (〚 x 〛 a) ∨h (〚 y 〛 a)
+  〚 x ⟶ y 〛 a = (〚 x 〛 a) ⟶h (〚 y 〛 a)
 
   _satisfies_ : Assignment → Ctx → Set
-  a satisfies Γ = ∀ {γ} → γ ∈ Γ → ⟦ γ ⟧ a ≡ {!!} -- TODO: should be the top element of H
+  a satisfies Γ = ∀ {γ} → γ ∈ Γ → 〚 γ 〛 a ≡ ⊤h 
 
   infix 4 _⊨_
   _⊨_ : Ctx → Prop → Set
-  Γ ⊨ C = ∀ {a} → a satisfies Γ → ⟦ C ⟧ a ≡ {!!} -- TODO: same as above?
+  Γ ⊨ C = ∀ {a} → a satisfies Γ → 〚 C 〛 a ≡ ⊤h
 
   -- TODO: Is something like this needed for soundness? How to state
   -- it? Probably not true with top and bottom element instead of holes
-  val-dec : (φ : Prop) → (a : Assignment) → Either (⟦ φ ⟧ a ≡ {!!}) (⟦ φ ⟧ a ≡ {!!})
-  val-dec = {!!}
+  --val-dec : (φ : Prop) → (a : Assignment) → Either (〚 φ 〛 a ≡ {!!}) (〚 φ 〛 a ≡ {!!})
+  --val-dec = {!!}
 
   -- The final boss
   soundness : ∀ {Γ} {C} → Γ ⊢ C → Γ ⊨ C
-  soundness = {!!}
+  soundness (id x) a_sat_Γ = a_sat_Γ x
+  soundness ⊤R a_sat_Γ = refl
+  soundness {Γ} {C = C} (⊥L x) {a} a_sat_Γ = ≤-antisym (〚 C 〛 a) ⊤h (≤-top (〚 C 〛 a)) {!!}
+  soundness {Γ} (∧R {A = A} {B} d d₁) {a} a_sat_Γ = {!!}
+  soundness {Γ} {C = C} (∧L₁ {A = A} {B} x d) {a} a_sat_Γ = {!!}
+  soundness (∧L₂ x d) a_sat_Γ = {!!}
+  soundness (∨R₁ d) a_sat_Γ = {!!}
+  soundness (∨R₂ d) a_sat_Γ = {!!}
+  soundness (∨L x d d₁) a_sat_Γ = {!!}
+  soundness (→R d) a_sat_Γ = {!!}
+  soundness (→L x d d₁) a_sat_Γ = {!!}
+  soundness (cut d d₁) a_sat_Γ = {!!}
 
 
 
