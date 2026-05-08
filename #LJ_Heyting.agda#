@@ -271,18 +271,18 @@ module Soundness
   -- The final boss
   
   soundness : ∀ {Γ} {C} → Γ ⊢ C → Γ ⊨ C
-  soundness (id x) a_sat_Γ = ?
-  soundness ⊤R a_sat_Γ = ?
-  soundness (⊥L x) a_sat_Γ = ?
-  soundness (∧R d d₁) a_sat_Γ = ?
-  soundness (∧L₁ x d) a_sat_Γ = ?
-  soundness (∧L₂ x d) a_sat_Γ = ?
-  soundness (∨R₁ d) a_sat_Γ = ?
-  soundness (∨R₂ d) a_sat_Γ = ?
-  soundness (∨L x d d₁) a_sat_Γ = ?
-  soundness (→R d) a_sat_Γ = ?
-  soundness (→L x d d₁) a_sat_Γ = ?
-  soundness (cut d d₁) a_sat_Γ = ?
+  soundness (id x) a_sat_Γ = {!!}
+  soundness ⊤R a_sat_Γ = {!!}
+  soundness (⊥L x) a_sat_Γ = {!!}
+  soundness (∧R d d₁) a_sat_Γ = {!!}
+  soundness (∧L₁ x d) a_sat_Γ = {!!}
+  soundness (∧L₂ x d) a_sat_Γ = {!!}
+  soundness (∨R₁ d) a_sat_Γ = {!!}
+  soundness (∨R₂ d) a_sat_Γ = {!!}
+  soundness (∨L x d d₁) a_sat_Γ = {!!}
+  soundness (→R d) a_sat_Γ = {!!}
+  soundness (→L x d d₁) a_sat_Γ = {!!}
+  soundness (cut d d₁) a_sat_Γ = {!!}
 
   
 
