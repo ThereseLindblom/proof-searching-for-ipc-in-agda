@@ -1,5 +1,6 @@
 
 
+
 module proof-searching-for-ipc-in-agda.LJ_Heyting where
 
 open import Data.Nat using (ℕ)
@@ -210,7 +211,8 @@ module Soundness
       (H6 : (a b : H) → a ≤ (a ∨h b))
       (H7 : (a b : H) → b ≤ (a ∨h b))
       (H8 : (a b c : H) → a ≤ c → b ≤ c → (a ∨h b) ≤ c)
-      (H9 : (a b c : H) → c ≤ (a ⟶h b) ≡ (c ∧h a) ≤ b)
+      (H9₁ : (a b c : H) → (c ∧h a) ≤ b → c ≤ (a ⟶h b))
+      (H9₂ : (a b c : H) → c ≤ (a ⟶h b) → (c ∧h a) ≤ b)
       (∧h-assoc : (a b c : H) → a ∧h (b ∧h c) ≡ (a ∧h b) ∧h c)
       (∨h-assoc : (a b c : H) → a ∨h (b ∨h c) ≡ (a ∨h b) ∨h c)
       (∧h-comm : (a b : H) → a ∧h b ≡ b ∧h a)
@@ -225,12 +227,47 @@ module Soundness
   -- TODO: You might need to prove lemmas about Heyting algebras here.
   -- This can be done on a call by need basis by seeing what you need in the proof below
 
+  ∧h-≤-∨h : (a b c : H) → (a ∧h b) ≤ (b ∨h c)
+  ∧h-≤-∨h a b c = ≤-trans (a ∧h b) b (b ∨h c) (H3 a b) (H6 b c)
 
+  ∧h-d-∨h-lemma₁ : (a b c : H) → ((b ∧h a) ∨h (c ∧h a)) ≤ ((b ∨h c) ∧h a)
+  ∧h-d-∨h-lemma₁ a b c =
+                  H8
+                    (b ∧h a) (c ∧h a) ((b ∨h c) ∧h a)
+                    (H4
+                      (b ∨h c) a (b ∧h a)
+                      (≤-trans
+                        (b ∧h a) b (b ∨h c)
+                        (H2 b a)
+                        (H6 b c)
+                      )
+                      (H3 b a)
+                    )
+                    (H4
+                      (b ∨h c)
+                      a
+                      (c ∧h a)
+                      (≤-trans
+                        (c ∧h a) c (b ∨h c)
+                        (H2 c a)
+                        (H7 b c))
+                      (H3 c a)
+                    )
+
+  ∧h-d-∨h-lemma₂ : (a b c : H) → ((b ∨h c) ∧h a) ≤ ((b ∧h a) ∨h (c ∧h a))
+  ∧h-d-∨h-lemma₂ a b c = H9₂ a ((b ∧h a) ∨h (c ∧h a)) (b ∨h c)
+                             (H8 b c (a ⟶h ((b ∧h a) ∨h (c ∧h a)))
+                               (H9₁ a ((b ∧h a) ∨h (c ∧h a)) b
+                                 (H6 (b ∧h a) (c ∧h a)))
+                               (H9₁ a ((b ∧h a) ∨h (c ∧h a)) c
+                                 (H7 (b ∧h a) (c ∧h a))
+                               )
+                             )
 
   ∧h-distrib-∨h : (a b c : H) → (b ∨h c) ∧h a ≡ (b ∧h a) ∨h (c ∧h a)
   ∧h-distrib-∨h a b c = ≤-antisym ((b ∨h c) ∧h a) ((b ∧h a) ∨h (c ∧h a))
-                                  {!!}
-                                  {!!}
+                                  (∧h-d-∨h-lemma₂ a b c)
+                                  (∧h-d-∨h-lemma₁ a b c)
   
   ∨h-distrib-∧h : (a b c : H) → a ∨h (b ∧h c) ≡ (a ∨h b) ∧h (a ∨h c)
   ∨h-distrib-∧h a b c = ≤-antisym (a ∨h (b ∧h c)) ((a ∨h b) ∧h (a ∨h c))
